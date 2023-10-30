@@ -82,9 +82,9 @@ npm uninstall fibers && rm package-lock.json && rm -R node_modules && npm instal
 
 
 
-## Run from nginx
+## Install & run from nginx
 
-[Install nginx on Mac](https://www.javatpoint.com/installing-nginx-on-mac)
+[Install nginx on Mac by brew / not recommended](https://www.javatpoint.com/installing-nginx-on-mac)
 
 ```shell
 The default port has been set in /opt/homebrew/etc/nginx/nginx.conf to 8080 so that
@@ -101,7 +101,52 @@ brew services stop nginx
 curl http://127.0.0.1:8080
 ```
 
+[Install nginx directly from binary installers](https://blog.csdn.net/qq_23858785/article/details/123132765)
 
+It needs to download 3 things and compile them all
+
+```shell
+1. nginx http://nginx.org/en/download.html
+2. prce lib https://sourceforge.net/projects/pcre/files/
+3. openssl https://www.openssl.org/source/
+```
+
+### compile nginx
+
+```shell
+cd nginx-1.18.0/
+sudo ./configure --with-pcre=../pcre-8.45/ 
+sudo make
+sudo make install
+# add to home path
+vim ~/.zshrc
+export PATH="/usr/local/nginx/sbin:$PATH"
+source ~/.zshrc
+# run nginx
+cd /usr/local/nginx/sbin
+sudo ./nginx
+```
+
+let's have test 
+
+![image-20231030180526739](./project_basic.assets/image-20231030180526739.png)
+
+### Nginx usage
+
+```shell
+Options:
+  -?,-h         : this help
+  -v            : show version and exit
+  -V            : show version and configure options then exit
+  -t            : test configuration and exit
+  -T            : test configuration, dump it and exit
+  -q            : suppress non-error messages during configuration testing
+  -s signal     : send signal to a master process: stop, quit, reopen, reload
+  -p prefix     : set prefix path (default: /usr/local/nginx/)
+  -e filename   : set error log file (default: logs/error.log)
+  -c filename   : set configuration file (default: conf/nginx.conf)
+  -g directives : set global directives out of configuration file
+```
 
 Nginx use localhost:80 as main page (default port is 80), copy front resources into html folder. It will run in the LAN (local area network).
 
