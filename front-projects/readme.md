@@ -29,9 +29,20 @@ cd /usr/local/nginx/sbin
 sudo ./nginx
 ```
 
+## Nginx config
+```shell
+cd /usr/local/nginx/conf
+sudo vim nginx.conf
+```
+copy the sky folder to html folder, and set the root value as that path using vim
+then reload the config via `sudo nginx reload`
+
+
+
 ## Nginx usage
 use `sudo nginx` to start a nginx server
 use `sudo nginx -s stop` to stop
+use `sudo nginx -s reload` to load the configuration updates!
 ```shell
 Options:
   -?,-h         : this help

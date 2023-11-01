@@ -74,13 +74,11 @@ npm uninstall eslint eslint-plugin-vue babel-eslint
 npm install eslint eslint-plugin-vue babel-eslint
 ```
 
-If always have some dependency problem, try using this cmd to remove all the conflicts and install other s
+If always have some dependency problem, try using this cmd to remove all the conflicts and install others
 
 ```shell
 npm uninstall fibers && rm package-lock.json && rm -R node_modules && npm install
 ```
-
-
 
 ## Install & run from nginx
 
@@ -149,6 +147,51 @@ Options:
 ```
 
 Nginx use localhost:80 as main page (default port is 80), copy front resources into html folder. It will run in the LAN (local area network).
+
+### reverse proxy
+
+Why is the request url different from what we have in backend scripts? It will lead to error if we donot config the reverse proxy correctly.
+
+The reqeust is not directly linked to the backend service, instead, we have an nginx server, and the reqeust is linked to the nginx server. After that, nginx send a reqeust to backend service (also have a function called load balance)
+
+![image-20231031230936398](./project_basic.assets/image-20231031230936398.png)
+
+#### why do we use nginx reverse proxy?
+
+<img src="./project_basic.assets/image-20231031231148659.png" alt="image-20231031231148659" style="zoom: 25%;" />
+
+1. Store some cache on nginx side to speed up visiting
+2. Load balance. We can send requests to more servers according to certain strategy.
+3. Protect backend safety. Prohibit front directly visit the backend service in case of some potential attacking requests.
+
+#### How to config the reverse proxy?
+
+repalce the `api` with` localhost:8080/admin`
+
+<img src="./project_basic.assets/image-20231031231420364.png" alt="image-20231031231420364" style="zoom: 25%;" />
+
+#### How to config the load balance?
+
+<img src="./project_basic.assets/image-20231031231532647.png" alt="image-20231031231532647" style="zoom:25%;" />
+
+Assume we have 2 servers, gninx can send the request to 2 servers one by one on average. Of course, we have many other strategies, image we have a high-performance computer and a low-performance computer, we can use the weight strategy.
+
+Some strategies about nginx load balance:
+
+<img src="./project_basic.assets/image-20231031231739426.png" alt="image-20231031231739426" style="zoom: 25%;" />
+
+#### config the nginx
+
+```shell
+cd /usr/local/nginx/conf
+sudo vim nginx.conf
+# reverse proxy, transmit request to tomcat servers
+location /api/ {
+	proxy_pass   http://localhost:8080/admin/;
+}
+# reload the config
+sudo nginx -s reload
+```
 
 # Backend prepare
 
@@ -265,6 +308,93 @@ Then we can use postman to test the apis. Be careful with the request method, an
 
 <img src="./project_basic.assets/image-20231026115038626.png" alt="image-20231026115038626" style="zoom:50%;" />
 
+If the postman pass, but front failed, need to install nginx, use nginx to host front projects, config nginx.conf proxy reverse, and then have a try.
 
+# Password & MD5
 
-https://www.bilibili.com/video/BV1TP411v7v6?p=9&vd_source=2cdc3de199e29dc4f7a75c883bb0d11d
+MD5: Message Digest Algorithm.
+
+MD5 is commonly used in password because it can not be reversed from md5 string to raw strings. In java, we have a DigestUtils to generate md5 strings.
+
+```java
+password = DigestUtils.md5DigestAsHex(password.getBytes());
+```
+
+# Import API doc & YApi
+
+Api design is a very important period during software devlopment.
+
+In most projects which separate front and backend, we are highly relied on API. Through this way, front and backend engineers can work at the same time.
+
+<img src="./project_basic.assets/image-20231031235103763.png" alt="image-20231031235103763" style="zoom:25%;" />
+
+[YApi](https://yapi.pro/group/155524)/ApiFox is a good website to manage apis.
+
+# Swagger VS Postman
+
+If we have tons of Apis, using postman will be a trouble.
+
+There is a framework called knife4j
+
+## how to use swagger
+
+Step 1 import cordinates of knife4j
+
+```xml
+<dependency>
+    <groupId>com.github.xiaoymin</groupId>
+    <artifactId>knife4j-spring-boot-starter</artifactId>
+</dependency>
+```
+
+Step 2 add configuration of knife4j. (this config is Docket) swagger use reflection to know all the controllers after the basePackage is specified.
+
+```java
+public Docket docket() {
+  ApiInfo apiInfo = new ApiInfoBuilder()
+          .title("苍穹外卖项目接口文档")
+          .version("2.0")	// set version 2.0
+          .description("苍穹外卖项目接口文档")
+          .build();
+  Docket docket = new Docket(DocumentationType.SWAGGER_2)
+          .apiInfo(apiInfo)
+          .select()
+          // specify module that we want to scan
+      .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))
+          .paths(PathSelectors.any())
+          .build();
+  return docket;
+}
+```
+
+Step 3 set static resource mapping, otherwise spring will think that `/doc.html` should be some controller but he cannot find that controller.
+
+```java
+protected void addResourceHandlers(ResourceHandlerRegistry registry) { registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/"); registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+}
+```
+
+## use swagger to test
+
+swagger can be executed like postman and is better than postman.
+
+Visit this website: http://localhost:8080/doc.html#/home
+
+![image-20231101002452191](./project_basic.assets/image-20231101002452191.png)
+
+## comments in swagger
+
+We can add some comments to swagger so that the API document is easier to read. It is very like something we add to the table when we init a sql table.
+
+Usually, we add Api to controller, ApiOperation to method, ApiModel to pojo, ApiModelProperty to field of pojo. After adding some comment and refresh the swagger online api documents, we can see the updates in real time.
+
+![image-20231101002757089](./project_basic.assets/image-20231101002757089.png)
+
+## swagger vs postman vs YApi
+
+swagger reflects the controller already implemented in backend service, swagger can both generate the api document and test the api like postman.
+
+postman will be a trouble when there are too many apis, but if the project is too simple and there is no swagger, postman can still work.
+
+YApi will not change after the api is designed, it is a reference.
+
