@@ -7,3 +7,8 @@
 1. successfully config the nginx reverse proxy
 2. use DigestUtils to fix plaintext password when login, set breakpoints and debug
 3. register YApi and import the api documents
+
+2023.11.01
+1. finish api: add an employee
+2. handle duplicated key exception
+3. get empId from local thread

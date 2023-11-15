@@ -3,8 +3,11 @@ package com.sky.controller.admin;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
@@ -78,13 +81,51 @@ public class EmployeeController {
         return Result.success();
     }
 
-    /**
-     * 退出
-     *
-     * @return
-     */
+    @ApiOperation("query page of employee")
+    @GetMapping("/page")
+    public Result<PageResult> page(EmployeePageQueryDTO dto) {
+        log.info("page query: {}", dto);
+        PageResult pageResult = employeeService.pageQuery(dto);
+        return Result.success(pageResult);
+    }
+
+    @ApiOperation("enable/disable an employee")
+    @PostMapping("/status/{status}")
+    public Result changeStatus(@PathVariable Integer status, Long id) {
+        log.info("change employee {} status to {}", id, status);
+        employeeService.updateStatus(id, status);
+        return Result.success();
+    }
+
+
+    @GetMapping("/{id}")
+    @ApiOperation("query an employee by id")
+    public Result<Employee> getById(@PathVariable Integer id) {
+        log.info("query an employee with id {}", id);
+        Employee employee = employeeService.getById(id);
+        employee.setPassword("****");       // hide the password not be seen directly
+        return Result.success(employee);
+    }
+
+    @PutMapping
+    @ApiOperation("update an employee")
+    public Result update(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("update an employee");
+        employeeService.updateEmployee(employeeDTO);
+        return Result.success();
+    }
+
+
     @PostMapping("/logout")
     public Result<String> logout() {
+        return Result.success();
+    }
+
+    @PutMapping("/editPassword")
+    public Result<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
+        // the password is transferred in plain text ???!!!
+        log.info("edit password, {} -> {}", passwordEditDTO.getOldPassword(), passwordEditDTO.getNewPassword());
+        employeeService.updateEmployeePassword(passwordEditDTO);
         return Result.success();
     }
 

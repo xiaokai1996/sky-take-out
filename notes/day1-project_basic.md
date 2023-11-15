@@ -4,7 +4,7 @@
 
 ## Common software devlop precedure & roles
 
-![image-20231025203246998](./project_basic.assets/image-20231025203246998.png)
+![image-20231025203246998](day1-project_basic.assets/image-20231025203246998.png)
 
 For us software engineer, we cares more about the middle procedure, that is 
 
@@ -17,7 +17,7 @@ After we finish writing all the codes, we will first put the code into DEV env t
 
 ## DEV/STG/PRD environment
 
-![image-20231025204023482](./project_basic.assets/image-20231025204023482.png)
+![image-20231025204023482](day1-project_basic.assets/image-20231025204023482.png)
 
 Mostly, we have 3 different envs for different purposes.
 
@@ -27,7 +27,7 @@ Mostly, we have 3 different envs for different purposes.
 
 ## Tech architecture selection
 
-![image-20231025205126237](./project_basic.assets/image-20231025205126237.png)
+![image-20231025205126237](day1-project_basic.assets/image-20231025205126237.png)
 
 This is actually an MVC architecture. 
 
@@ -48,7 +48,7 @@ The key upgrade is as follows:
 1. Separated front and backend projects. Reggie use springboot to take over front resources, but better option is user nginx to take over front packages(not source code).
 2. Use spring task to calculate the data metric.
 
-<img src="./project_basic.assets/image-20231025163141869.png" alt="image-20231025163141869" style="zoom: 33%;" />
+<img src="day1-project_basic.assets/image-20231025163141869.png" alt="image-20231025163141869" style="zoom: 33%;" />
 
 # Front & prepare
 
@@ -127,7 +127,7 @@ sudo ./nginx
 
 let's have test 
 
-![image-20231030180526739](./project_basic.assets/image-20231030180526739.png)
+![image-20231030180526739](day1-project_basic.assets/image-20231030180526739.png)
 
 ### Nginx usage
 
@@ -154,11 +154,11 @@ Why is the request url different from what we have in backend scripts? It will l
 
 The reqeust is not directly linked to the backend service, instead, we have an nginx server, and the reqeust is linked to the nginx server. After that, nginx send a reqeust to backend service (also have a function called load balance)
 
-![image-20231031230936398](./project_basic.assets/image-20231031230936398.png)
+![image-20231031230936398](day1-project_basic.assets/image-20231031230936398.png)
 
 #### why do we use nginx reverse proxy?
 
-<img src="./project_basic.assets/image-20231031231148659.png" alt="image-20231031231148659" style="zoom: 25%;" />
+<img src="day1-project_basic.assets/image-20231031231148659.png" alt="image-20231031231148659" style="zoom: 25%;" />
 
 1. Store some cache on nginx side to speed up visiting
 2. Load balance. We can send requests to more servers according to certain strategy.
@@ -168,17 +168,17 @@ The reqeust is not directly linked to the backend service, instead, we have an n
 
 repalce the `api` with` localhost:8080/admin`
 
-<img src="./project_basic.assets/image-20231031231420364.png" alt="image-20231031231420364" style="zoom: 25%;" />
+<img src="day1-project_basic.assets/image-20231031231420364.png" alt="image-20231031231420364" style="zoom: 25%;" />
 
 #### How to config the load balance?
 
-<img src="./project_basic.assets/image-20231031231532647.png" alt="image-20231031231532647" style="zoom:25%;" />
+<img src="day1-project_basic.assets/image-20231031231532647.png" alt="image-20231031231532647" style="zoom:25%;" />
 
 Assume we have 2 servers, gninx can send the request to 2 servers one by one on average. Of course, we have many other strategies, image we have a high-performance computer and a low-performance computer, we can use the weight strategy.
 
 Some strategies about nginx load balance:
 
-<img src="./project_basic.assets/image-20231031231739426.png" alt="image-20231031231739426" style="zoom: 25%;" />
+<img src="day1-project_basic.assets/image-20231031231739426.png" alt="image-20231031231739426" style="zoom: 25%;" />
 
 #### config the nginx
 
@@ -204,7 +204,7 @@ sudo nginx -s reload
 
 ### 1. Sky-common
 
-<img src="./project_basic.assets/image-20231025191641772.png" alt="image-20231025191641772" style="zoom: 50%;" />
+<img src="day1-project_basic.assets/image-20231025191641772.png" alt="image-20231025191641772" style="zoom: 50%;" />
 
 Common module is dependent by other modules as a while.
 
@@ -217,7 +217,7 @@ Common module is dependent by other modules as a while.
 
 ### 2. Sky-pojo
 
-![image-20231025192139835](./project_basic.assets/image-20231025192139835.png)
+![image-20231025192139835](day1-project_basic.assets/image-20231025192139835.png)
 
 POJO: plain old java object, entity, dto and vo are all POJOs.
 
@@ -227,7 +227,7 @@ POJO: plain old java object, entity, dto and vo are all POJOs.
 
 ### 3. Sky-server
 
-<img src="./project_basic.assets/image-20231025192552721.png" alt="image-20231025192552721" style="zoom: 50%;" />
+<img src="day1-project_basic.assets/image-20231025192552721.png" alt="image-20231025192552721" style="zoom: 50%;" />
 
 Sky-server is much like reggie project, the booting class is stored in this module.
 
@@ -247,7 +247,7 @@ Common module is more like a tool box and non-relative to business logic, it is 
 
 Right click on root folder and open module settings, add the parent folder as root module then it will automatically import 3 child modues and mark `java` as Sources, and `resources` as Resources.
 
-<img src="./project_basic.assets/image-20231026113710905.png" alt="image-20231026113710905" style="zoom:50%;" />
+<img src="day1-project_basic.assets/image-20231026113710905.png" alt="image-20231026113710905" style="zoom:50%;" />
 
 ## Version control by Git
 
@@ -272,7 +272,7 @@ Usually, we don't want git manage all the data, like compiled classes, IDEA conf
 
 We need an API for controllers, also we need a specification for all tables. Here is a database design documents.
 
-![image-20231025201223991](./project_basic.assets/image-20231025201223991.png)
+![image-20231025201223991](day1-project_basic.assets/image-20231025201223991.png)
 
 Usually we analyzed the data model first and design the table before development. But for now let's just be simple, execute all the sql cmds to create all the database and tables.
 
@@ -283,7 +283,7 @@ USE `sky_take_out`;
 
 The data model is as follows.
 
-<img src="./project_basic.assets/image-20231025195611290.png" alt="image-20231025195611290" style="zoom: 50%;" />
+<img src="day1-project_basic.assets/image-20231025195611290.png" alt="image-20231025195611290" style="zoom: 50%;" />
 
 The core is `user` , `dish`, and `orders` , which corresponds to a famous theory "people goods market". All the other tables are designed around this 3 core concepts. Here is the explaination about these 11 tables using this theory.
 
@@ -300,13 +300,13 @@ Before we debug,  there are several things to do
 1. Init the DB and config the link info in application.yml properly.
 2. Compile the parent module first to assure all child modules pass the check.
 
-<img src="./project_basic.assets/image-20231025201522208.png" alt="image-20231025201522208" style="zoom: 50%;" />
+<img src="day1-project_basic.assets/image-20231025201522208.png" alt="image-20231025201522208" style="zoom: 50%;" />
 
 There is a boot application toolbar too, we can click the bug(worm) icon to debug the whole backend application. Add a break point to certain lines so we can view the detailed information of some middle variables.
 
 Then we can use postman to test the apis. Be careful with the request method, and the post body should be in raw json format rather than form-data.
 
-<img src="./project_basic.assets/image-20231026115038626.png" alt="image-20231026115038626" style="zoom:50%;" />
+<img src="day1-project_basic.assets/image-20231026115038626.png" alt="image-20231026115038626" style="zoom:50%;" />
 
 If the postman pass, but front failed, need to install nginx, use nginx to host front projects, config nginx.conf proxy reverse, and then have a try.
 
@@ -326,7 +326,7 @@ Api design is a very important period during software devlopment.
 
 In most projects which separate front and backend, we are highly relied on API. Through this way, front and backend engineers can work at the same time.
 
-<img src="./project_basic.assets/image-20231031235103763.png" alt="image-20231031235103763" style="zoom:25%;" />
+<img src="day1-project_basic.assets/image-20231031235103763.png" alt="image-20231031235103763" style="zoom:25%;" />
 
 [YApi](https://yapi.pro/group/155524)/ApiFox is a good website to manage apis.
 
@@ -380,7 +380,7 @@ swagger can be executed like postman and is better than postman.
 
 Visit this website: http://localhost:8080/doc.html#/home
 
-![image-20231101002452191](./project_basic.assets/image-20231101002452191.png)
+![image-20231101002452191](day1-project_basic.assets/image-20231101002452191.png)
 
 ## comments in swagger
 
@@ -388,7 +388,7 @@ We can add some comments to swagger so that the API document is easier to read. 
 
 Usually, we add Api to controller, ApiOperation to method, ApiModel to pojo, ApiModelProperty to field of pojo. After adding some comment and refresh the swagger online api documents, we can see the updates in real time.
 
-![image-20231101002757089](./project_basic.assets/image-20231101002757089.png)
+![image-20231101002757089](day1-project_basic.assets/image-20231101002757089.png)
 
 ## swagger vs postman vs YApi
 
