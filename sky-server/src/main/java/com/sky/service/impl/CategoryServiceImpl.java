@@ -76,5 +76,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.getCategoryListByType(type);
     }
 
+    @Override
+    public Category getById(Long categoryId) {
+        return categoryMapper.getById(categoryId);
+    }
+
 
 }

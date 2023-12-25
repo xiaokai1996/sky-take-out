@@ -49,6 +49,7 @@ public class EmployeeController {
     @PostMapping("/login")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("员工登录：{}", employeeLoginDTO);
+        // 每个请求都会对应一个线程,这个线程是可以直接获取到一些线程信息的?
         log.info("current thread is: {}", Thread.currentThread());
         Employee employee = employeeService.login(employeeLoginDTO);
 
@@ -58,10 +59,11 @@ public class EmployeeController {
         // Each request has a thread local, login and add are 2 different requests
         // BaseContext.setCurrentId(employee.getId());
         String token = JwtUtil.createJWT(
-                jwtProperties.getAdminSecretKey(),
+                jwtProperties.getAdminSecretKey(),  // 这些值是在哪里设置的?
                 jwtProperties.getAdminTtl(),
                 claims);
 
+        // 如果在VO上面增加一个Builder的注释,那么可以用这种优雅的方式直接新建对象
         EmployeeLoginVO employeeLoginVO = EmployeeLoginVO.builder()
                 .id(employee.getId())
                 .userName(employee.getUsername())

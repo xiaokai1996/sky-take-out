@@ -20,4 +20,6 @@ public interface CategoryService {
     void changeStatus(Long id, Integer status);
 
     List<Category> getCategoryListByType(Integer type);
+
+    Category getById(Long categoryId);
 }

@@ -33,6 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
 
+
     /**
      * 员工登录
      *
@@ -43,7 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("current thread is: {}", Thread.currentThread());
         String username = employeeLoginDTO.getUsername();
 
-        // this way is not safe, we need to translate it into md5
+        // direct way is not safe, we need to translate it into md5
         String password = employeeLoginDTO.getPassword();
         password = DigestUtils.md5DigestAsHex(password.getBytes());
 
@@ -56,8 +57,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
 
-        //密码比对
-        // TODO 后期需要进行md5加密，然后再进行比对
+        //密码比对,数据库里面存放的已经是经过md5处理之后的密码
         if (!password.equals(employee.getPassword())) {
             //密码错误
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
@@ -74,6 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void save(EmployeeDTO employeeDTO) {
+        // 前端传递过来的是DTO,数据库保存的是普通的entity
         log.info("current thread id: {}", Thread.currentThread());
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
@@ -84,6 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         String password = DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes());
         employee.setPassword(password);
 
+        // 这里其实可以设置一个拦截器,在mapper层上面加一个注解,这样就可以在保存entity的时候,批量把这4个值设定好
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
 

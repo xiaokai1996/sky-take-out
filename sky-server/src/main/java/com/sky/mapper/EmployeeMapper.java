@@ -27,7 +27,7 @@ public interface EmployeeMapper {
     @AutoFill(value= OperationType.INSERT)
     void save(Employee employee);
 
-
+    // 过于复杂的sql
     Page<Employee> pageQuery(EmployeePageQueryDTO dto);
 
     @AutoFill(value = OperationType.UPDATE)

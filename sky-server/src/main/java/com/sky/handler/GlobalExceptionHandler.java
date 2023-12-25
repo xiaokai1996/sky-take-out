@@ -38,6 +38,7 @@ public class GlobalExceptionHandler {
             log.error("database unique error: {}", msg);
             return Result.error(msg);
         }
+        log.error(ex.getMessage());
         return Result.error(MessageConstant.UNKNOWN_ERROR);
     }
 
