@@ -1,6 +1,7 @@
 package com.sky.config;
 
 import com.sky.interceptor.JwtTokenAdminInterceptor;
+import com.sky.interceptor.JwtTokenUserInterceptor;
 import com.sky.json.JacksonObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,54 +30,88 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     @Autowired
     private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
+    @Autowired
+    private JwtTokenUserInterceptor jwtTokenUserInterceptor;
 
     /**
      * 注册自定义拦截器
-     *
      * @param registry
      */
     protected void addInterceptors(InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/admin/**")
-                .excludePathPatterns("/admin/employee/login", "/admin/employee/health")
-                .excludePathPatterns("/admin/shop/**");
+                .excludePathPatterns("/admin/employee/login");
+
+        registry.addInterceptor(jwtTokenUserInterceptor)
+                .addPathPatterns("/user/**")
+                .excludePathPatterns("/user/user/login")
+                .excludePathPatterns("/user/shop/status");
     }
 
-    /**
-     * 通过knife4j生成接口文档
-     * @return
-     */
     @Bean
-    public Docket docket() {
+    public Docket docket1(){
+        log.info("准备生成接口文档...");
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title("苍穹外卖项目接口文档")
                 .version("2.0")
-                .description("苍穹外卖项目接口文档详细说明")
+                .description("苍穹外卖项目接口文档")
                 .build();
-        return new Docket(DocumentationType.SWAGGER_2)
+
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("管理端接口")
                 .apiInfo(apiInfo)
                 .select()
-                // specify module that we want to scan
-                .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))
+                //指定生成接口需要扫描的包
+                .apis(RequestHandlerSelectors.basePackage("com.sky.controller.admin"))
                 .paths(PathSelectors.any())
                 .build();
+
+        return docket;
+    }
+
+    @Bean
+    public Docket docket2(){
+        log.info("准备生成接口文档...");
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("苍穹外卖项目接口文档")
+                .version("2.0")
+                .description("苍穹外卖项目接口文档")
+                .build();
+
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("用户端接口")
+                .apiInfo(apiInfo)
+                .select()
+                //指定生成接口需要扫描的包
+                .apis(RequestHandlerSelectors.basePackage("com.sky.controller.user"))
+                .paths(PathSelectors.any())
+                .build();
+
+        return docket;
     }
 
     /**
-     * 设置静态资源映射
+     * 设置静态资源映射，主要是访问接口文档（html、js、css）
      * @param registry
      */
-    // cannot modify this method name cos it is override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        log.info("开始设置静态资源映射...");
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
+    /**
+     * 扩展Spring MVC框架的消息转化器
+     * @param converters
+     */
     protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        log.info("start to extend message converters");
+        log.info("扩展消息转换器...");
+        //创建一个消息转换器对象
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        //需要为消息转换器设置一个对象转换器，对象转换器可以将Java对象序列化为json数据
         converter.setObjectMapper(new JacksonObjectMapper());
-        converters.add(0, converter);
+        //将自己的消息转化器加入容器中
+        converters.add(0,converter);
     }
 }

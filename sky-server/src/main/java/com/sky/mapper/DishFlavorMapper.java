@@ -2,7 +2,6 @@ package com.sky.mapper;
 
 import com.sky.entity.DishFlavor;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -10,17 +9,24 @@ import java.util.List;
 
 @Mapper
 public interface DishFlavorMapper {
+    /**
+     * 批量插入口味数据
+     * @param flavors
+     */
+    void insertBatch(List<DishFlavor> flavors);
 
-    @Select("select * from dish_flavor where dish_id=#{id}")
-    List<DishFlavor> getByDishId(Long id);
+    /**
+     * 根据菜品id删除对应的口味数据
+     * @param dishId
+     */
+    @Delete("delete from dish_flavor where dish_id = #{dishId}")
+    void deleteByDishId(Long dishId);
 
-    @Insert("insert into dish_flavor (dish_id, name, value) values (#{dishId}, #{name}, #{value})")
-    void add(DishFlavor dishFlavor);
-
-    @Delete("delete from dish_flavor where dish_id=#{id}")
-    void deleteByDishId(Long id);
-
-    // in method 只能出现在复杂的sql语法中,否则会出现对象解析失败的错误
-    // @Delete("delete from dish_flavor where dish_id in #{dishIds}")
-    void deleteBatchByDishIds(List<Long> dishIds);
+    /**
+     * 根据菜品id查询对应的口味数据
+     * @param dishId
+     * @return
+     */
+    @Select("select * from dish_flavor where dish_id = #{dishId}")
+    List<DishFlavor> getByDishId(Long dishId);
 }

@@ -2,38 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetmealDishMapper">
-<!--    注意这里的返回值类型,不是Long.class,而是java.lang.Long,spring需要从绝对路径去扫描包-->
+
     <select id="getSetmealIdsByDishIds" resultType="java.lang.Long">
-        select setmeal_id
-          from setmeal_dish
-         where dish_id in
-<!--        注意这里的集合是要通过框架自动生成的-->
-        <foreach collection="dishIds" separator="," open="(" close=")" item="dishId">
+        select setmeal_id from setmeal_dish where dish_id in
+        <foreach collection="dishIds" item="dishId" separator="," open="(" close=")">
             #{dishId}
         </foreach>
     </select>
 
-
-<!--    <select id="update" resultType="com.sky.entity.Employee">-->
-<!--        update employee-->
-<!--        &lt;!&ndash;  optional set &ndash;&gt;-->
-<!--        <set>-->
-<!--            <if test="name != null">name=#{name},</if>-->
-<!--            <if test="username != null">username=#{username},</if>-->
-<!--            <if test="password != null">password=#{password},</if>-->
-<!--            <if test="phone != null">phone=#{phone},</if>-->
-<!--            <if test="sex != null">sex=#{sex},</if>-->
-<!--            <if test="idNumber != null">id_number=#{idNumber},</if>-->
-<!--            <if test="updateUser != null">update_user=#{updateUser},</if>-->
-<!--            <if test="updateTime != null">update_time=#{updateTime},</if>-->
-<!--            <if test="status != null">status=#{status},</if>-->
-<!--        </set>-->
-<!--        where id=#{id}-->
-<!--    </select>-->
-
-<!--    <select id="updatePassword" resultType="com.sky.entity.Employee">-->
-<!--        update employee-->
-<!--        set password=#{newPassword}-->
-<!--        where id=#{empId} and password=#{oldPassword}-->
-<!--    </select>-->
+    <insert id="insertBatch" parameterType="list">
+        insert into setmeal_dish (setmeal_id,dish_id,name,price,copies)
+        values
+        <foreach collection="setmealDishes" item="sd" separator=",">
+            (#{sd.setmealId},#{sd.dishId},#{sd.name},#{sd.price},#{sd.copies})
+        </foreach>
+    </insert>
 </mapper>

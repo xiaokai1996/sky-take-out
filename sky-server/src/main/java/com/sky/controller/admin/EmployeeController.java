@@ -4,7 +4,6 @@ import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
-import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
 import com.sky.result.PageResult;
@@ -24,21 +23,16 @@ import java.util.Map;
 /**
  * 员工管理
  */
-@Api("employee CRUD")
 @RestController
 @RequestMapping("/admin/employee")
 @Slf4j
+@Api(tags = "员工相关接口")
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
     @Autowired
     private JwtProperties jwtProperties;
-
-    @GetMapping("/health")
-    public Result<String> health() {
-        return Result.success("this is a health check, congratulations if you see this message!");
-    }
 
     /**
      * 登录
@@ -47,23 +41,20 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/login")
+    @ApiOperation(value = "员工登录")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("员工登录：{}", employeeLoginDTO);
-        // 每个请求都会对应一个线程,这个线程是可以直接获取到一些线程信息的?
-        log.info("current thread is: {}", Thread.currentThread());
+
         Employee employee = employeeService.login(employeeLoginDTO);
 
         //登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
-        // Each request has a thread local, login and add are 2 different requests
-        // BaseContext.setCurrentId(employee.getId());
         String token = JwtUtil.createJWT(
-                jwtProperties.getAdminSecretKey(),  // 这些值是在哪里设置的?
+                jwtProperties.getAdminSecretKey(),
                 jwtProperties.getAdminTtl(),
                 claims);
 
-        // 如果在VO上面增加一个Builder的注释,那么可以用这种优雅的方式直接新建对象
         EmployeeLoginVO employeeLoginVO = EmployeeLoginVO.builder()
                 .id(employee.getId())
                 .userName(employee.getUsername())
@@ -74,61 +65,79 @@ public class EmployeeController {
         return Result.success(employeeLoginVO);
     }
 
-    @ApiOperation("add a new employee")
-    @PostMapping
-    public Result add(@RequestBody EmployeeDTO employeeDTO) {
-        log.info("add a new employee: {}", employeeDTO);
-        log.info("current thread is: {}", Thread.currentThread());
-        employeeService.save(employeeDTO);
-        return Result.success();
-    }
-
-    @ApiOperation("query page of employee")
-    @GetMapping("/page")
-    public Result<PageResult> page(EmployeePageQueryDTO dto) {
-        log.info("page query: {}", dto);
-        PageResult pageResult = employeeService.pageQuery(dto);
-        return Result.success(pageResult);
-    }
-
-    @ApiOperation("enable/disable an employee")
-    @PostMapping("/status/{status}")
-    public Result changeStatus(@PathVariable Integer status, Long id) {
-        log.info("change employee {} status to {}", id, status);
-        employeeService.updateStatus(id, status);
-        return Result.success();
-    }
-
-
-    @GetMapping("/{id}")
-    @ApiOperation("query an employee by id")
-    public Result<Employee> getById(@PathVariable Integer id) {
-        log.info("query an employee with id {}", id);
-        Employee employee = employeeService.getById(id);
-        employee.setPassword("****");       // hide the password not be seen directly
-        return Result.success(employee);
-    }
-
-    @PutMapping
-    @ApiOperation("update an employee")
-    public Result update(@RequestBody EmployeeDTO employeeDTO) {
-        log.info("update an employee");
-        employeeService.updateEmployee(employeeDTO);
-        return Result.success();
-    }
-
-
+    /**
+     * 退出
+     *
+     * @return
+     */
     @PostMapping("/logout")
+    @ApiOperation("员工退出")
     public Result<String> logout() {
         return Result.success();
     }
 
-    @PutMapping("/editPassword")
-    public Result<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
-        // the password is transferred in plain text ???!!!
-        log.info("edit password, {} -> {}", passwordEditDTO.getOldPassword(), passwordEditDTO.getNewPassword());
-        employeeService.updateEmployeePassword(passwordEditDTO);
+    /**
+     * 新增员工
+     * @param employeeDTO
+     * @return
+     */
+    @PostMapping
+    @ApiOperation("新增员工")
+    public Result save(@RequestBody EmployeeDTO employeeDTO){
+        log.info("新增员工：{}",employeeDTO);
+        employeeService.save(employeeDTO);
         return Result.success();
     }
 
+    /**
+     * 员工分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
+    @GetMapping("/page")
+    @ApiOperation("员工分页查询")
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
+        log.info("员工分页查询，参数为：{}", employeePageQueryDTO);
+        PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
+        return Result.success(pageResult);
+    }
+
+    /**
+     * 启用禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用禁用员工账号")
+    public Result startOrStop(@PathVariable Integer status,Long id){
+        log.info("启用禁用员工账号：{},{}",status,id);
+        employeeService.startOrStop(status,id);
+        return Result.success();
+    }
+
+    /**
+     * 根据id查询员工信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询员工信息")
+    public Result<Employee> getById(@PathVariable Long id){
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("编辑员工信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("编辑员工信息：{}", employeeDTO);
+        employeeService.update(employeeDTO);
+        return Result.success();
+    }
 }

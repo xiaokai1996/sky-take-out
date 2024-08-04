@@ -8,38 +8,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-@Api("设置店铺状态")
-@Slf4j
-@RestController
+@RestController("adminShopController")
 @RequestMapping("/admin/shop")
+@Api(tags = "店铺相关接口")
+@Slf4j
 public class ShopController {
 
     public static final String KEY = "SHOP_STATUS";
 
-    // 这种用法就和spring的controller-service-mapper这样的framework很类似
-    // 普通的数据走csm(controller-service-mapper)这种方式,spring通过注解去识别
-    // 相同点:都需要导入相应的驱动坐标,连接信息,都需要加上注解
-    // csm需要保证csm命名一致性,3个相关注解
-    // redis需要额外配置到spring-config中,并且要设置为Bean属性
     @Autowired
-    RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
 
-    // /admin/shop/{status}
+    /**
+     * 设置店铺的营业状态
+     * @param status
+     * @return
+     */
     @PutMapping("/{status}")
-    @ApiOperation("设置店铺营业状态")
-    public Result setStatus(@PathVariable Integer status) {
-        // 原来用的是service然后走到mapper最后到数据库,现在直接走redis的template
-        // shopService.setStatus();
-        redisTemplate.opsForValue().set(KEY, status);
+    @ApiOperation("设置店铺的营业状态")
+    public Result setStatus(@PathVariable Integer status){
+        log.info("设置店铺的营业状态为：{}",status == 1 ? "营业中" : "打烊中");
+        redisTemplate.opsForValue().set(KEY,status);
         return Result.success();
     }
 
+    /**
+     * 获取店铺的营业状态
+     * @return
+     */
     @GetMapping("/status")
-    @ApiOperation("获取店铺营业状态")
-    public Result<Integer> getStatus() {
-        // opsForValue是operation for value的意思
+    @ApiOperation("获取店铺的营业状态")
+    public Result<Integer> getStatus(){
         Integer status = (Integer) redisTemplate.opsForValue().get(KEY);
+        log.info("获取到店铺的营业状态为：{}",status == 1 ? "营业中" : "打烊中");
         return Result.success(status);
     }
-
 }
