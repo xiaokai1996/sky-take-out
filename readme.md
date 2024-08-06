@@ -16,3 +16,6 @@
 1. finish api: add an employee
 2. handle duplicated key exception
 3. get empId from local thread
+
+2024.08.06
+- copy all the codes, and try to comment it with the help of https://yiyan.baidu.com/

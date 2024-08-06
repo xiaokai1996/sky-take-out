@@ -12,7 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * WebSocket服务
+ * WebSocket服务，用于长时间连接的通信，例如在线游戏，聊天应用
+ * 当客户端连接到这个路径时，onOpen 方法会被调用；当客户端发送消息时，onMessage 方法会被调用；
+ * 当连接关闭时，onClose 方法会被调用；如果发生错误，onError 方法会被调用。
  */
 @Component
 @ServerEndpoint("/ws/{sid}")
