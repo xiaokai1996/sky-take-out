@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+// 这里使用了mybatis的注解
 @Mapper
 public interface EmployeeMapper {
 
@@ -35,6 +36,7 @@ public interface EmployeeMapper {
      * @param employeePageQueryDTO
      * @return
      */
+    // @TODO 这里对应的xml语句写的好像不对，这里就是一个原生查询，分页用的是插件，不是原生SQL！
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 
     /**

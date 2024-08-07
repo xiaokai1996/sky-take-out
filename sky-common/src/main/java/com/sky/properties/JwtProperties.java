@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "sky.jwt")    // 这是一个配置类
+@ConfigurationProperties(prefix = "sky.jwt")    // 这是一个配置类，会读取application.yml文件
 @Data
 public class JwtProperties {
 
@@ -24,3 +24,17 @@ public class JwtProperties {
     private String userTokenName;
 
 }
+
+/* 这个配置在 application.yml 文件中，但是这个驼峰和短横线是怎么自动转换的？
+sky:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: itcast
+    # 设置jwt过期时间
+    admin-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    admin-token-name: token
+    user-secret-key: itheima
+    user-ttl: 7200000
+    user-token-name: authentication
+ */

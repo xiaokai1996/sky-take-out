@@ -31,6 +31,8 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+
+    // 这是一个配置类，spring会自动去application.yml读取配置，装填到配置类中
     @Autowired
     private JwtProperties jwtProperties;
 

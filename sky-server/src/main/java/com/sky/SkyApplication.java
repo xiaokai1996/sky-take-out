@@ -7,6 +7,19 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+// 理解几个核心注解
+
+/*
+1. 这是一个复合注解，里面包含一些元注解，即注解的注解
+@Target指定作用的类型（Type指定类，Field字段声明，Method方法声明）
+@Inherited表示注解会被子类继承
+@RetentionPolicy指注解保留的范围，（Source保存在源文件，CLASS保存在.class文件，RUNTIME在JVM中，可以在运行时被反射）
+@Documented指该类会被javadoc类似的工具文档化
+2. 核心注解包括
+@SpringBootConfiguration    类似于@Configuration，标记配置类
+@EnableAutoConfiguration    根据jar自动配置bean
+@ComponentScan  扫描@Component和Controller、Service、Repository等注解的类
+ */
 @SpringBootApplication
 /*
 1. 如果想要使用@Transactional事务注解，就要使用@EnableTransactionMangament注解，并且加到主启动类或者@Configuration注解的配置类
@@ -14,6 +27,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 3. 如果使用了spring-data-jpa，那么不需要显示的开启这个注解
  */
 @EnableTransactionManagement //开启注解方式的事务管理
+/*
+1. 注意这个注解是由lombok提供的，而且Retention范围是source，只有源码里面有，因此最好在开发环境中安装lombok插件，
+lombok里面的@Data也会在源代码基础上自动生成getter和setter方法，范围也是Source，所以在structure里面可以看到@Data注解生成的getter/setter
+2. Slf4j是一个框架，具体的实现需要别的日志框架
+ */
 @Slf4j
 /*
 1.启动这个注解可以在Service层或者DAO层使用缓存注解，例如Cacheable
