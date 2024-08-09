@@ -43,6 +43,7 @@ public interface EmployeeMapper {
      * 根据主键动态修改属性
      * @param employee
      */
+    // 这个AutoFill注解放在mapper层，在插入数据库之前进行字段填充
     @AutoFill(value = OperationType.UPDATE)
     void update(Employee employee);
 

@@ -7,7 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 自定义注解，用于标识某个方法需要进行功能字段自动填充处理
+ * 自定义注解，用于标识某个方法需要进行功能字段自动填充处理，这个注解可要可不要
+ * 添加这个注解，是为了在看代码的时候更加方便，真正有价值的代码在aspect定义的切点pointcut和通知advice中
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
